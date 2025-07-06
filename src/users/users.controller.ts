@@ -32,6 +32,23 @@ export class UsersController {
       throw new Error('Failed to create user');
     }
   }
+
+  @Post('login')
+  async validate(@Body() validateUserDto: RequestUserDto) {
+    try {
+      const user = await this.usersService.findByEmail(validateUserDto.email);
+
+      if (!user || user.senha !== validateUserDto.senha) {
+        throw new Error('Failed to find user');
+      }
+
+      return new ResponseUserDto(user);
+    } catch (error) {
+      console.log('Failed to validate user:', error);
+      throw new Error('Failed to validate user');
+    }
+  }
+
   @Get()
   async findAll() {
     try {
@@ -47,6 +64,7 @@ export class UsersController {
   async findOne(@Param('id') id: string) {
     try {
       const userById = await this.usersService.findOne(id);
+      return userById;
     } catch (error) {
       console.log('Failed to get user by id:', error);
       if (error instanceof HttpException) throw error;

@@ -31,6 +31,24 @@ export class UsersService {
     }
   }
 
+  async findByEmail(email: string) {
+    try {
+      const userValidation = await this.usersRepository.findOne({
+        where: {
+          email,
+        },
+      });
+      if (!userValidation) {
+        throw new NotFoundException(`Usuário não encontrado.`);
+      }
+      return userValidation;
+    } catch (error) {
+      throw error instanceof NotFoundException
+        ? error
+        : new InternalServerErrorException('Erro ao buscar usuário.');
+    }
+  }
+
   async findAll() {
     try {
       return await this.usersRepository.find();
@@ -50,6 +68,7 @@ export class UsersService {
       if (!user) {
         throw new NotFoundException(`Usuário com ID ${id} não encontrado.`);
       }
+      return user;
     } catch (error) {
       throw error instanceof NotFoundException
         ? error

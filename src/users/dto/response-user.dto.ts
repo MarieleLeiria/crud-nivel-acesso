@@ -1,3 +1,4 @@
+//import { Acess } from 'src/enums/acess.enum';
 import { UserEntity } from '../entities/user.entity';
 
 export class ResponseUserDto {
@@ -5,11 +6,14 @@ export class ResponseUserDto {
   firstName: string;
   lastName: string;
   email: string;
+  senha: string;
+  acess: 'admin' | 'user';
 
   constructor(user: Partial<UserEntity>) {
     this.id = user.id ?? '';
     this.firstName = user.firstName ?? '';
     this.lastName = user.lastName ?? '';
     this.email = user.email ?? '';
+    this.acess = user.acess === 'admin' ? 'admin' : 'user';
   }
 }

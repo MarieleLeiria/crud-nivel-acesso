@@ -1,19 +1,14 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsString,
-  MinLength,
-} from '@nestjs/class-validator';
+import { IsNotEmpty, IsString, MinLength } from '@nestjs/class-validator';
 
 export class RequestUserDto {
   @IsString()
   @IsNotEmpty()
-  @MinLength(2)
+  @MinLength(3)
   firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  @MinLength(2)
+  @MinLength(3)
   lastName: string;
 
   @IsString()
@@ -22,8 +17,10 @@ export class RequestUserDto {
   email: string;
 
   @IsString()
-  access: 'admin' | 'user';
+  @IsNotEmpty()
+  @MinLength(5)
+  senha: string;
 
-  @IsBoolean()
-  isActive: boolean;
+  @IsString()
+  access: 'admin' | 'user' | null;
 }

@@ -1,0 +1,11 @@
+//public
+
+GET http://localhost:3333/users/login
+GET http://localhost:3333/users/:id
+
+//private
+
+POST http://localhost:3333/users
+aut
+PATCH http://localhost:3333/users
+DELETE http://localhost:3333/users/:id

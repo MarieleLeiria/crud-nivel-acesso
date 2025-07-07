@@ -8,7 +8,6 @@ import {
   Param,
   Delete,
   InternalServerErrorException,
-  NotFoundException,
   HttpException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -16,13 +15,21 @@ import { RequestUserDto } from './dto/request-user.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { Acess } from 'src/enums/acess.enum';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Roles(Acess.ADMIN)
   @Post()
+  @ApiOperation({ summary: 'Cria um novo usuário' })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuário criado com sucesso',
+    type: ResponseUserDto,
+  })
   async create(@Body() createUserDto: RequestUserDto) {
     try {
       const createdUser = await this.usersService.create(createUserDto);
@@ -33,23 +40,30 @@ export class UsersController {
     }
   }
 
-  @Post('login')
-  async validate(@Body() validateUserDto: RequestUserDto) {
-    try {
-      const user = await this.usersService.findByEmail(validateUserDto.email);
+  // @Post('login')
+  // @ApiOperation({ summary: 'validação de usuários' })
+  // @ApiResponse({ status: 200, description: 'Usuário validado com sucesso' })
+  // async validate(@Body() validateUserDto: RequestUserDto) {
+  //   try {
+  //     const user = await this.usersService.findByEmail(validateUserDto.email);
 
-      if (!user || user.senha !== validateUserDto.senha) {
-        throw new Error('Failed to find user');
-      }
+  //     if (!user || user.senha !== validateUserDto.senha) {
+  //       throw new Error('Failed to find user');
+  //     }
 
-      return new ResponseUserDto(user);
-    } catch (error) {
-      console.log('Failed to validate user:', error);
-      throw new Error('Failed to validate user');
-    }
-  }
+  //     return new ResponseUserDto(user);
+  //   } catch (error) {
+  //     console.log('Failed to validate user:', error);
+  //     throw new Error('Failed to validate user');
+  //   }
+  // }
 
   @Get()
+  @ApiOperation({ summary: 'Lista todos os usuários' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de usuários retornada com sucesso',
+  })
   async findAll() {
     try {
       const allUsers = await this.usersService.findAll();
@@ -61,6 +75,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Retorna usuário por id' })
+  @ApiResponse({ status: 200, description: 'Usuário retornado com sucesso' })
   async findOne(@Param('id') id: string) {
     try {
       const userById = await this.usersService.findOne(id);
@@ -73,6 +89,8 @@ export class UsersController {
   }
 
   @Roles(Acess.ADMIN)
+  @ApiOperation({ summary: 'Atualizar suário' })
+  @ApiResponse({ status: 200, description: 'Usuário atualizo com sucesso' })
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -87,6 +105,8 @@ export class UsersController {
     }
   }
   @Roles(Acess.ADMIN)
+  @ApiOperation({ summary: 'Remover pelo id' })
+  @ApiResponse({ status: 200, description: 'Usuário deletado com sucesso' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {

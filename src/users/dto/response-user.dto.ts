@@ -1,6 +1,7 @@
 //import { Acess } from 'src/enums/acess.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserEntity } from '../entities/user.entity';
+import { UserAccess } from 'src/enums/access';
 
 export class ResponseUserDto {
   @ApiProperty({ description: 'User id', example: '223nb2jh4g' })
@@ -19,13 +20,13 @@ export class ResponseUserDto {
   senha: string;
 
   @ApiProperty({ description: 'User type', example: 'admin' })
-  acess: 'admin' | 'user';
+  access: UserAccess;
 
   constructor(user: Partial<UserEntity>) {
     this.id = user.id ?? '';
     this.firstName = user.firstName ?? '';
     this.lastName = user.lastName ?? '';
     this.email = user.email ?? '';
-    this.acess = user.acess === 'admin' ? 'admin' : 'user';
+    this.access = user.access ?? UserAccess.DEFAULT;
   }
 }

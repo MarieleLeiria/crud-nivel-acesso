@@ -10,7 +10,7 @@ async function bootstrap() {
     .setTitle('Login nivel de acesso')
     .setDescription('API documentation for a simple acess level aplication')
     .setVersion('1.0')
-    .addTag('cats')
+    .addTag('users')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);

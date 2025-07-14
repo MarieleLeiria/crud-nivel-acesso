@@ -1,4 +1,5 @@
 //import { Acess } from 'src/enums/acess.enum';
+import { UserAccess } from 'src/enums/access';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
@@ -18,6 +19,11 @@ export class UserEntity {
   @Column({ nullable: false })
   senha: string;
 
-  @Column()
-  acess: 'admin' | 'user' | '';
+  @Column({
+    type: 'enum',
+    enum: UserAccess,
+    enumName: 'user_access_enum',
+    nullable: true,
+  })
+  access: UserAccess | null;
 }

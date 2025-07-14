@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, MinLength } from '@nestjs/class-validator';
+import { UserAccess } from 'src/enums/access';
 
 export class RequestUserDto {
   @IsString()
@@ -22,5 +23,5 @@ export class RequestUserDto {
   senha: string;
 
   @IsString()
-  access: 'admin' | 'user' | null;
+  access: UserAccess | null;
 }

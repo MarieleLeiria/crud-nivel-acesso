@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { RequestUserDto } from './dto/request-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -14,24 +13,6 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
   ) {}
-
-  async findByEmail(email: string) {
-    try {
-      const userValidation = await this.usersRepository.findOne({
-        where: {
-          email,
-        },
-      });
-      if (!userValidation) {
-        throw new NotFoundException(`Usuário não encontrado.`);
-      }
-      return userValidation;
-    } catch (error) {
-      throw error instanceof NotFoundException
-        ? error
-        : new InternalServerErrorException('Erro ao buscar usuário.');
-    }
-  }
 
   async findAll() {
     try {
@@ -57,40 +38,6 @@ export class UsersService {
       throw error instanceof NotFoundException
         ? error
         : new InternalServerErrorException('Erro ao buscar usuário.');
-    }
-  }
-
-  async update(id: string, updateUserDto: Partial<RequestUserDto>) {
-    try {
-      const result = await this.usersRepository.update(id, updateUserDto);
-
-      if (result.affected === 0) {
-        throw new NotFoundException(
-          `Usuário com ID ${id} não encontrado para atualizar.`,
-        );
-      }
-      return { message: 'Usuário atualizado com sucesso' };
-    } catch (error) {
-      throw error instanceof NotFoundException
-        ? error
-        : new InternalServerErrorException('Erro ao atualizar usuário.');
-    }
-  }
-
-  async remove(id: string) {
-    try {
-      const result = await this.usersRepository.delete(id);
-
-      if (result.affected === 0) {
-        throw new NotFoundException(
-          `Usuário com ID ${id} não encontrado para remover.`,
-        );
-      }
-      return { message: 'Usuário removido com sucesso' };
-    } catch (error) {
-      throw error instanceof NotFoundException
-        ? error
-        : new InternalServerErrorException('Erro ao remover usuário.');
     }
   }
 }

@@ -27,6 +27,6 @@ export class ResponseUserDto {
     this.firstName = user.firstName ?? '';
     this.lastName = user.lastName ?? '';
     this.email = user.email ?? '';
-    this.access = user.access ?? UserAccess.DEFAULT;
+    this.access = user.access ?? UserAccess.USER;
   }
 }

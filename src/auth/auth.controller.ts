@@ -1,3 +1,4 @@
+import { UserAccess } from './../enums/access';
 import {
   Body,
   Controller,
@@ -16,19 +17,31 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RequestUserDto } from '../users/dto/request-user.dto';
 import { ResponseUserDto } from '../users/dto/response-user.dto';
 import { AuthGuard } from './auth.guard';
+import { Public } from 'src/common/interceptors/feature/role.schemas';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private AuthService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
+  //@HttpCode(HttpStatus.OK)
+  @Public()
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.AuthService.signIn(
-      signInDto.userEmail,
-      signInDto.userSenha,
-      signInDto.userAccess,
-    );
+  @ApiOperation({ summary: 'Valida usuario' })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuário validado com sucesso',
+    type: ResponseUserDto,
+  })
+  async signIn(@Body() signInDto: Record<string, any>) {
+    try {
+      return await this.authService.signIn(
+        signInDto.userEmail,
+        signInDto.userSenha,
+        signInDto.UserAccess,
+      );
+    } catch (error) {
+      console.log('Failed to validate user:', error);
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -41,7 +54,7 @@ export class AuthController {
   })
   async create(@Body() createUserDto: RequestUserDto) {
     try {
-      const createdUser = await this.AuthService.create(createUserDto);
+      const createdUser = await this.authService.create(createUserDto);
       return new ResponseUserDto(createdUser);
     } catch (error) {
       console.log('Failed to create user:', error);
@@ -58,7 +71,7 @@ export class AuthController {
     @Body() updateUserDto: Partial<RequestUserDto>,
   ) {
     try {
-      return await this.AuthService.update(id, updateUserDto);
+      return await this.authService.update(id, updateUserDto);
     } catch (error) {
       console.log('Failed to update user:', error);
       if (error instanceof HttpException) throw error;
@@ -72,7 +85,7 @@ export class AuthController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {
-      return this.AuthService.remove(id);
+      return this.authService.remove(id);
     } catch (error) {
       console.log('Failed to delete user');
       if (error instanceof HttpException) throw error;

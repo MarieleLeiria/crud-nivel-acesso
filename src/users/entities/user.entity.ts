@@ -1,4 +1,3 @@
-//import { Acess } from 'src/enums/acess.enum';
 import { UserAccess } from 'src/enums/access';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 

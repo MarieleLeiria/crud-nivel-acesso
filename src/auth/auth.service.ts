@@ -24,9 +24,11 @@ export class AuthService {
 
   async create(createUserDto: RequestUserDto) {
     try {
+      const hashedPassword = await bcrypt.hash(createUserDto.senha, 10);
       const newUser = this.usersRepository.create({
         ...createUserDto,
         id: uuidv4(),
+        senha: hashedPassword,
       });
 
       return await this.usersRepository.save(newUser);
@@ -39,14 +41,15 @@ export class AuthService {
   async signIn(
     userEmail: string,
     userSenha: string,
-    userType: string,
+    userAccess: string,
   ): Promise<{ access_token: string }> {
     const user = await this.usersService.findOne(userEmail);
+
     if (!user || !(await bcrypt.compare(userSenha, user.senha))) {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, email: user.email, type: user.access };
+    const payload = { sub: user.id, email: user.email, access: user.access };
 
     return {
       access_token: await this.jwtService.signAsync(payload),

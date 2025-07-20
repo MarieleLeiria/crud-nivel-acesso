@@ -12,6 +12,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { PasswordService } from 'src/password/password.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private usersRepository: Repository<UserEntity>,
     private usersService: UsersService,
     private jwtService: JwtService,
+    private passwordService: PasswordService,
   ) {}
 
   async create(createUserDto: RequestUserDto) {
@@ -43,9 +45,17 @@ export class AuthService {
     userSenha: string,
     userAccess: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOne(userEmail);
+    const user = await this.usersService.findOne('email', userEmail);
 
-    if (!user || !(await bcrypt.compare(userSenha, user.senha))) {
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const isPasswordValid = await this.passwordService.validatePassword(
+      user.id,
+      userSenha,
+    );
+    if (!isPasswordValid) {
       throw new UnauthorizedException();
     }
 
@@ -57,6 +67,7 @@ export class AuthService {
   }
 
   async update(id: string, updateUserDto: Partial<RequestUserDto>) {
+    console.log('Atualizando usuário:', id, updateUserDto);
     try {
       const result = await this.usersRepository.update(id, updateUserDto);
 
@@ -67,9 +78,8 @@ export class AuthService {
       }
       return { message: 'Usuário atualizado com sucesso' };
     } catch (error) {
-      throw error instanceof NotFoundException
-        ? error
-        : new InternalServerErrorException('Erro ao atualizar usuário.');
+      console.error('Erro real no update do usuário:', error); // 👈 isso mostra o erro real
+      throw new InternalServerErrorException('Erro ao atualizar usuário.');
     }
   }
 

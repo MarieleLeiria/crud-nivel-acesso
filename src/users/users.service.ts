@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException } from '@nestjs/common';
 import { userSeed } from './entities/seed';
 import * as bcrypt from 'bcrypt';
+import { ResponseUserDto } from './dto/response-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -36,22 +37,6 @@ export class UsersService {
     return createdUsers;
   }
 
-  // async create(createUserDto: RequestUserDto) {
-  //   try {
-  //     const hashedPassword = await bcrypt.hash(createUserDto.senha, 10);
-
-  //     const newUser = this.usersRepository.create({
-  //       ...createUserDto,
-  //       senha: hashedPassword,
-  //     });
-
-  //     return await this.usersRepository.save(newUser);
-  //   } catch (error) {
-  //     console.error('Erro ao criar usuário:', error);
-  //     throw new BadRequestException('Não foi possível criar o usuário.');
-  //   }P
-  // }
-
   async findAll(userId: string): Promise<UserEntity[]> {
     console.log('userid service', userId);
     try {
@@ -66,17 +51,22 @@ export class UsersService {
     }
   }
 
-  async findOne(email: string) {
+  async findOne(
+    field: keyof UserEntity,
+    value: string,
+  ): Promise<ResponseUserDto> {
     try {
       const user = await this.usersRepository.findOne({
         where: {
-          email,
+          [field]: value,
         },
       });
       if (!user) {
-        throw new NotFoundException(`Usuário com ID ${email} não encontrado.`);
+        throw new NotFoundException(
+          `Usuário com o ${field} : ${value} não encontrado.`,
+        );
       }
-      return user;
+      return ResponseUserDto.fromEntity(user);
     } catch (error) {
       throw error instanceof NotFoundException
         ? error

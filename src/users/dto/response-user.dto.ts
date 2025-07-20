@@ -1,32 +1,36 @@
-//import { Acess } from 'src/enums/acess.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserEntity } from '../entities/user.entity';
 import { UserAccess } from 'src/enums/access';
 
 export class ResponseUserDto {
-  @ApiProperty({ description: 'User id', example: '223nb2jh4g' })
+  @ApiProperty({ description: 'User ID', example: '223nb2jh4g' })
   id: string;
 
-  @ApiProperty({ description: 'Username', example: 'Mariele' })
+  @ApiProperty({ description: 'First name', example: 'Mariele' })
   firstName: string;
 
-  @ApiProperty({ description: 'User lastname', example: 'Leiria' })
+  @ApiProperty({ description: 'Last name', example: 'Leiria' })
   lastName: string;
 
-  @ApiProperty({ description: 'User email', example: 'teste@teste' })
+  @ApiProperty({ description: 'Email address', example: 'teste@teste.com' })
   email: string;
 
-  @ApiProperty({ description: 'User password', example: 'pizza123' })
-  senha: string;
-
-  @ApiProperty({ description: 'User type', example: 'admin' })
+  @ApiProperty({
+    description: 'User role/access type',
+    enum: UserAccess,
+    example: UserAccess.ADMIN,
+  })
   access: UserAccess;
 
-  constructor(user: Partial<UserEntity>) {
-    this.id = user.id ?? '';
-    this.firstName = user.firstName ?? '';
-    this.lastName = user.lastName ?? '';
-    this.email = user.email ?? '';
+  constructor(user: UserEntity) {
+    this.id = user.id;
+    this.firstName = user.firstName;
+    this.lastName = user.lastName;
+    this.email = user.email;
     this.access = user.access ?? UserAccess.USER;
+  }
+
+  static fromEntity(user: UserEntity): ResponseUserDto {
+    return new ResponseUserDto(user);
   }
 }

@@ -23,7 +23,7 @@ import { Public } from 'src/common/interceptors/feature/role.schemas';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  //@HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
   @ApiOperation({ summary: 'Valida usuario' })

@@ -7,6 +7,7 @@ import {
   HttpException,
   UseGuards,
   Req,
+  ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -40,18 +41,18 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  // @Public()
   @Get()
   @ApiOperation({ summary: 'Lista todos os usuários' })
   @ApiResponse({
     status: 200,
     description: 'Lista de usuários retornada com sucesso',
   })
-  async findAll(@Req() req): Promise<UserEntity[]> {
+  async findAll(@Req() req: { user: { sub: string } }): Promise<UserEntity[]> {
     if (!req.user || !req.user.sub) {
       throw new UnauthorizedException('Usuário não autenticado.');
     }
     const userId = req.user.sub;
-    console.log('req', userId);
     try {
       return this.usersService.findAll(userId);
     } catch (error) {
@@ -59,17 +60,27 @@ export class UsersController {
       throw new InternalServerErrorException('Erro ao buscar usuários.');
     }
   }
-
-  @Public()
+  @UseGuards(AuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Retorna usuário por id' })
   @ApiResponse({ status: 200, description: 'Usuário retornado com sucesso' })
-  async findOne(@Param('id') id: string) {
+  async findOne(
+    @Param('id') id: string,
+    @Req() req: { user: { sub: string } },
+  ) {
+    const loggedUser = req.user?.sub;
+
+    if (id === loggedUser) {
+      throw new ForbiddenException(
+        'Você não pode buscar os seus próprios dados por esta rota.',
+      );
+    }
+
     try {
-      const userById = await this.usersService.findOne(id);
+      const userById = await this.usersService.findOne('id', id);
       return userById;
     } catch (error) {
-      console.log('Failed to get user by id:', error);
+      console.error('Failed to get user by id:', error);
       if (error instanceof HttpException) throw error;
       throw new InternalServerErrorException('Erro ao buscar usuário por ID.');
     }

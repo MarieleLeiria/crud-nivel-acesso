@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { UserEntity } from './users/entities/user.entity';
 import { PasswordService } from './password/password.service';
+import { ProductService } from './product/product.service';
 
 @Module({
   imports: [
@@ -28,6 +29,6 @@ import { PasswordService } from './password/password.service';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PasswordService],
+  providers: [AppService, PasswordService, ProductService],
 })
 export class AppModule {}

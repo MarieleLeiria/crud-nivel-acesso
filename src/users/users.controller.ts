@@ -62,27 +62,34 @@ export class UsersController {
   }
   @UseGuards(AuthGuard)
   @Get(':id')
-  @ApiOperation({ summary: 'Retorna usuário por id' })
+  @ApiOperation({ summary: 'Retorna usuário por id ou email' })
   @ApiResponse({ status: 200, description: 'Usuário retornado com sucesso' })
   async findOne(
     @Param('id') id: string,
-    @Req() req: { user: { sub: string } },
+    @Req() req: { user: { sub: string; email: string } }, // Certifique-se de que o payload JWT inclua o email
   ) {
-    const loggedUser = req.user?.sub;
+    const loggedUserId = req.user?.sub;
+    const loggedUserEmail = req.user?.email;
 
-    if (id === loggedUser) {
+    const isEmail = id.includes('@');
+    const isRequestingOwnData =
+      (isEmail && id === loggedUserEmail) || (!isEmail && id === loggedUserId);
+
+    if (isRequestingOwnData) {
       throw new ForbiddenException(
         'Você não pode buscar os seus próprios dados por esta rota.',
       );
     }
 
+    const parameter = isEmail ? 'email' : 'id';
+
     try {
-      const userById = await this.usersService.findOne('id', id);
-      return userById;
+      const user = await this.usersService.findOne(parameter, id);
+      return user;
     } catch (error) {
-      console.error('Failed to get user by id:', error);
+      console.error('Erro ao buscar usuário:', error);
       if (error instanceof HttpException) throw error;
-      throw new InternalServerErrorException('Erro ao buscar usuário por ID.');
+      throw new InternalServerErrorException('Erro ao buscar usuário.');
     }
   }
 }

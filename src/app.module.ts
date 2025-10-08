@@ -8,6 +8,9 @@ import { AuthModule } from './auth/auth.module';
 import { UserEntity } from './users/entities/user.entity';
 import { PasswordService } from './password/password.service';
 import { ProductService } from './product/product.service';
+import { ProductEntity } from './product/entities/product.entity';
+import { ProductsModule } from './product/product.module';
+import { ReviewEntity } from './product/entities/review.entity';
 
 @Module({
   imports: [
@@ -21,12 +24,13 @@ import { ProductService } from './product/product.service';
       username: 'postgres',
       password: 'password',
       database: 'postgres',
-      entities: [UserEntity],
+      entities: [UserEntity, ProductEntity, ReviewEntity],
       synchronize: true,
       autoLoadEntities: true,
     }),
     UsersModule,
     AuthModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PasswordService, ProductService],

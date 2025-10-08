@@ -10,6 +10,7 @@ export const userSeed: UserEntity[] = [
     email: 'mariele.leiria@example.com',
     senha: 'senha123',
     access: UserAccess.ADMIN,
+    reviews: [],
   },
   {
     id: uuidv4(),
@@ -18,6 +19,7 @@ export const userSeed: UserEntity[] = [
     email: 'joao.silva@example.com',
     senha: 'senha123',
     access: UserAccess.USER,
+    reviews: [],
   },
   {
     id: uuidv4(),
@@ -26,5 +28,6 @@ export const userSeed: UserEntity[] = [
     email: 'ana.souza@example.com',
     senha: 'senha123',
     access: null,
+    reviews: [],
   },
 ];

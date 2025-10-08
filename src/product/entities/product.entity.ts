@@ -2,7 +2,8 @@ import { ProductCategorys } from 'src/enums/category';
 import { ProductProperties } from 'src/enums/properties';
 import { ProductScore } from 'src/enums/score';
 import { ProductSubcategory } from 'src/enums/subcategory';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { ReviewEntity } from './review.entity';
 
 @Entity()
 export class ProductEntity {
@@ -47,6 +48,12 @@ export class ProductEntity {
   })
   score: ProductScore;
 
+  @OneToMany(() => ReviewEntity, (review) => review.product)
+  reviews: ReviewEntity[];
+
   @Column({ nullable: false })
   characteristics: string;
+
+  @Column()
+  storage: number;
 }

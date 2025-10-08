@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -28,6 +29,18 @@ export class ProductService {
     return createdProducts;
   }
 
+  async createProduct(createproductDto: RequestProductDto) {
+    try {
+      const newProduct = await this.productsRepository.create({
+        ...createproductDto,
+      });
+      return await this.productsRepository.save(newProduct);
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+      throw new BadRequestException('Não foi possível criar o usuário.');
+    }
+  }
+
   async findAllProducts(productId: string): Promise<ProductEntity[]> {
     console.log('product id from service', productId);
     try {
@@ -42,15 +55,38 @@ export class ProductService {
     }
   }
 
-  async findOneProduct(id: string): Promise<ResponseProductDto> {
+  // async findOneProduct(id: string): Promise<ResponseProductDto> {
+  //   try {
+  //     const product = await this.productsRepository.findOne({
+  //       where: {
+  //         id: id,
+  //       },
+  //     });
+  //     if (!product) {
+  //       throw new NotFoundException(`Produto com o ${id} não encontrado.`);
+  //     }
+  //     return ResponseProductDto.fromProductEntity(product);
+  //   } catch (error) {
+  //     throw error instanceof NotFoundException
+  //       ? error
+  //       : new InternalServerErrorException('Erro ao buscar produto.');
+  //   }
+  // }
+
+  async findOneProduct(
+    field: string,
+    value: string,
+  ): Promise<ResponseProductDto> {
     try {
       const product = await this.productsRepository.findOne({
         where: {
-          id: id,
+          [field]: value,
         },
       });
       if (!product) {
-        throw new NotFoundException(`Produto com o ${id} não encontrado.`);
+        throw new NotFoundException(
+          `Produto com o ${field} : ${value} não encontrado.`,
+        );
       }
       return ResponseProductDto.fromProductEntity(product);
     } catch (error) {

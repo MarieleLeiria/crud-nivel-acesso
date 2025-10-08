@@ -5,6 +5,7 @@ import { ProductProperties } from 'src/enums/properties';
 import { ProductSubcategory } from 'src/enums/subcategory';
 import { ProductEntity } from '../entities/product.entity';
 import { UserEntity } from '../../users/entities/user.entity';
+import { ReviewEntity } from '../entities/review.entity';
 
 export class ResponseProductDto {
   @ApiProperty({ description: 'Product ID', example: '9g32jkg2' })
@@ -44,11 +45,9 @@ export class ResponseProductDto {
   stock: number;
 
   @ApiProperty({
-    description: 'Product score',
-    enum: ProductScore,
-    example: ProductScore.THREE,
+    description: 'Product review',
   })
-  score: ProductScore;
+  reviews: ReviewEntity[];
 
   @ApiProperty({
     description: 'Product description',
@@ -63,7 +62,7 @@ export class ResponseProductDto {
     this.category = product.category;
     this.subcategory = product.subcategory;
     this.properties = product.properties;
-    this.score = product.score;
+    this.reviews = product.reviews;
     this.characteristics = product.characteristics;
   }
 

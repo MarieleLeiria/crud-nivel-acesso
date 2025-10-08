@@ -1,5 +1,6 @@
 import { UserAccess } from 'src/enums/access';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { ReviewEntity } from 'src/product/entities/review.entity';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class UserEntity {
@@ -14,6 +15,9 @@ export class UserEntity {
 
   @Column({ nullable: false, unique: true })
   email: string;
+
+  @OneToMany(() => ReviewEntity, (review) => review.user)
+  reviews: ReviewEntity[];
 
   @Column({ nullable: false })
   senha: string;

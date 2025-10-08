@@ -23,10 +23,7 @@ import { RequestProductDto } from 'src/product/dto/request-product.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private authServiceProduct: ProductService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
   @Public()
@@ -84,22 +81,6 @@ export class AuthController {
     }
   }
 
-  @ApiOperation({ summary: 'Atualizar produto' })
-  @ApiResponse({ status: 200, description: 'Produto atualizado com sucesso' })
-  @Patch(':id')
-  async updateProduct(
-    @Param('id') id: string,
-    @Body() updateProductDto: Partial<RequestProductDto>,
-  ) {
-    try {
-      return await this.authServiceProduct.updateProduct(id, updateProductDto);
-    } catch (error) {
-      console.log('Failed to update user:', error);
-      if (error instanceof HttpException) throw error;
-      throw new InternalServerErrorException('Erro ao atualizar produto.');
-    }
-  }
-
   @ApiOperation({ summary: 'Remover pelo id' })
   @ApiResponse({ status: 200, description: 'Usuário deletado com sucesso' })
   @UseGuards(AuthGuard)
@@ -111,19 +92,6 @@ export class AuthController {
       console.log('Failed to delete user');
       if (error instanceof HttpException) throw error;
       throw new InternalServerErrorException('Erro ao deletar.');
-    }
-  }
-
-  @ApiOperation({ summary: 'Remover pelo id' })
-  @ApiResponse({ status: 200, description: 'Produto deletado com sucesso' })
-  @Delete(':id')
-  removeProduct(@Param('id') id: string) {
-    try {
-      return this.authServiceProduct.removeProduct(id);
-    } catch (error) {
-      console.log('Failed to delete product');
-      if (error instanceof HttpException) throw error;
-      throw new InternalServerErrorException('Erro ao deletar produto.');
     }
   }
 }

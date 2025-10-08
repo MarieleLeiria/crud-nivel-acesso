@@ -8,7 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { PasswordService } from 'src/password/password.service';
 import { ProductService } from 'src/product/product.service';
-
+import { ProductEntity } from 'src/product/entities/product.entity';
+import { ProductsModule } from 'src/product/product.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
@@ -20,7 +21,7 @@ import { ProductService } from 'src/product/product.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PasswordService, ProductService],
+  providers: [AuthService, PasswordService],
   exports: [AuthService],
 })
 export class AuthModule {}

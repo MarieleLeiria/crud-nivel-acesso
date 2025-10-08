@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PasswordService } from 'src/password/password.service';
+import { ProductService } from 'src/product/product.service';
 
 @Injectable()
 export class AuthService {
